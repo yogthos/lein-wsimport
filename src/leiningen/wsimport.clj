@@ -3,7 +3,7 @@
   (:require [clojure.java.io :as io]
             [taoensso.timbre :as timbre]
             [taoensso.timbre.appenders.core :as appenders]
-  ) 
+  )
   (:import (com.sun.tools.ws WsImport)))
 
 (timbre/refer-timbre)
@@ -28,15 +28,23 @@
 
 (defn compose-options-array
   "Create an array of options to pass in to WsImport#doMain out of
-   a map of settings (usually gathered from the project settings)" 
+   a map of settings (usually gathered from the project settings)"
   [wsdl-file wsimport-opts]
   (let [ws-ary   (transient [])    ;; this feels wrong
-        all-opts (conj opts wsimport-opts)]   
-    (if-not (:compile-java-sources all-opts) 
+        all-opts (conj opts wsimport-opts)]
+    (debug "all-opts:" all-opts)
+    (if-not (:compile-java-sources all-opts)
       (conj! ws-ary "-Xnocompile"))
     (if-let [out-dir (:java-output-directory all-opts)]
       (doseq [val ["-s" out-dir]]
         (conj! ws-ary val)))
+    (if-let [out-dir (:class-output-directory all-opts)]
+      (do
+        (info "output directory:" out-dir)
+        (conj! ws-ary "-d")
+        (conj! ws-ary out-dir)
+      )
+      (info "Output directory not specified"))
     (if (:keep-java-sources all-opts)
       (conj! ws-ary "-keep"))
     (if-let [pkg (:java-package-name all-opts)]
@@ -52,7 +60,7 @@
         (conj! ws-ary "-b")
         (conj! ws-ary jbinding)))
     (conj! ws-ary wsdl-file)
-    (persistent! ws-ary)))  ;; this seems like a confession washing away sins...   
+    (persistent! ws-ary)))  ;; this seems like a confession washing away sins...
 
 (defn import-wsdls
   "Call WsImport#doMain from Sun's JDK using an array of WSDL's to import
@@ -75,7 +83,7 @@
 
 To use this task, you need to add two pieces to your 'project.clj' file:
 
-    :wsimport {:wsdl-list [ \"put.wsdl\" \"your.wsdl\" 
+    :wsimport {:wsdl-list [ \"put.wsdl\" \"your.wsdl\"
                             \"files.wsdl\" \"here.wsdl\" ]]}
     ;; can also use URIs like \"http://somewhere.com/remote-wsdl.wsdl\"
 
@@ -106,4 +114,5 @@ For more information on this plugin see the homepage:
 
 https://github.com/klauern/lein-wsimport"
   ([project]
+   (debug "project: " project)
    (import-wsdls (-> project :wsimport :wsdl-list) (project :wsimport))))
