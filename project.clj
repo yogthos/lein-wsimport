@@ -1,4 +1,4 @@
-(defproject com.madeye.clojure/lein-wsimport "1.1.1"
+(defproject com.madeye.clojure/lein-wsimport "1.1.2"
   :description "JAX-WS import plugin for Clojure projects"
   :url "https://github.com/klauern/lein-wsimport"
   :dependencies [
