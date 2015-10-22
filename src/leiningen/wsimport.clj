@@ -1,7 +1,15 @@
 (ns leiningen.wsimport
   "Generate Java code from SOAP .wsdls using the JDK's wsimport task"
-  (:require [clojure.java.io :as io]) 
+  (:require [clojure.java.io :as io]
+            [taoensso.timbre :as timbre]
+            [taoensso.timbre.appenders.core :as appenders]
+  ) 
   (:import (com.sun.tools.ws WsImport)))
+
+(timbre/refer-timbre)
+(timbre/merge-config! {:appenders {:spit (appenders/spit-appender {:fname "lein-wsimport.log"})}})
+(timbre/merge-config! {:appenders {:println { :enabled? false } }})
+(timbre/set-level! :debug)
 
 (def opts {:compile-java-sources false
            :java-output-directory "target/generated/java"
@@ -55,9 +63,12 @@
     (if-not (.exists f)
       (.mkdirs f)))
   (doseq [wsdl wsdl-list]
-    (WsImport/doMain 
-      (into-array 
-        (compose-options-array wsdl wsdl-options)))))
+    (let [options (compose-options-array wsdl wsdl-options)]
+      (debug "options: " options)
+      (WsImport/main (into-array options))
+    )
+  )
+)
 
 (defn wsimport
   "Generate Java code from SOAP .wsdls using the JDK's wsimport task
