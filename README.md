@@ -1,6 +1,6 @@
 # lein-wsimport
 
-A Leiningen plugin to utilize the JDK's [`wsimport`](http://docs.oracle.com/javase/6/docs/technotes/tools/share/wsimport.html) task from a Leiningen project.
+A Leiningen plugin to utilize the JDK's [`wsimport`](http://docs.oracle.com/javase/6/docs/technotes/tools/share/wsimport.html) task from a Leiningen project.  This is a fork of the original https://github.com/klauern/lein-wsimport project.
 
 ## Why?
 Simply put, this is a thin wrapper around the `wsimport` command-line tool provided by Oracle's JDK.  This is polish for your Leiningen project in case you want to save typing `wsimport -some -options, etc.` multiple times for each .WSDL.  
@@ -11,7 +11,7 @@ I created this because I am new to Clojure and want to learn/contribute at the s
 Currently, this plugin only works against your `project.clj` configuration settings, so if you haven't already, add this to you're `:plugins` vector of your project.clj:
 
 ```clj
-[lein-wsimport "1.0.0"]
+[com.madeye.clojure/lein-wsimport "1.1.1"]
 ```
 
 Running this plugin from the command-line is simple enough:
