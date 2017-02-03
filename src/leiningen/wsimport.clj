@@ -2,9 +2,10 @@
   "Generate Java code from SOAP .wsdls using the JDK's wsimport task"
   (:require [clojure.java.io :as io]
             [taoensso.timbre :as timbre]
-            [taoensso.timbre.appenders.core :as appenders]
-  )
+            [taoensso.timbre.appenders.core :as appenders])
   (:import (com.sun.tools.ws WsImport)))
+
+(System/setProperty "javax.xml.accessExternalSchema" "all")
 
 (timbre/refer-timbre)
 (timbre/merge-config! {:appenders {:spit (appenders/spit-appender {:fname "lein-wsimport.log"})}})
